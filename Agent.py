@@ -4,11 +4,14 @@
 class Agent:
     def __init__(self, index):
         self.index = index
+        self.state = None
         self.signal = 0
         self.signalLog = []
-        self.socket = 0
-        self.socketLog = []
+        self.input_data = None
+        self.output_data = None
 
+    def action_to(self, Agent, input):
+        Agent.state = input
 
 class AntAgent(Agent):
     def __init__(self, index):
@@ -22,6 +25,7 @@ class AnalystAgent(Agent):
 
     def lie(self, Agent):
         Agent.socket = self.signal
+
 
 # 기업. 대상이 된다.
 class FirmAgent(Agent):
