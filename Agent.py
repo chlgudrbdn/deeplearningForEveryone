@@ -1,6 +1,5 @@
 # https://m.blog.naver.com/PostView.nhn?blogId=joooople&logNo=221240814631&proxyReferer=https%3A%2F%2Fwww.google.co.kr%2F
 
-
 class Agent:
     def __init__(self, index):
         self.index = index
@@ -13,7 +12,18 @@ class Agent:
     def action_to(self, Agent, input):
         Agent.state = input
 
+    def select_choice(self, price, n, N):  # 확률식은 초기조건 시트에 명시된 i일차 개인별 구매확률이 아닌 ppt를 따름. 단 감마라고 적힌 부분은 시트에 따라 delta로 대체
+        buy_prob = (1 - (price / 2000)) * (alpha + beta * (n / N) + delta * ((math.exp(-math.exp(-0.15 * (sum(self.buyLog) - 5)))) - 0.12))
+        # 구매 회수 m은 구매기록의 값을 모두 더한 값으로 한다.
+        self.buyProbabilityLog.append(buy_prob)
+        if random.random() < buy_prob:
+            return 1
+        else:
+            return 0
+
+
 class AntAgent(Agent):
+
     def __init__(self, index):
         self.index = index
 
@@ -39,16 +49,11 @@ class Institution(Agent):
         self.index = index
 
 
+"""
 # 검은머리 외국인
 class BlackHeadForeigner(Agent):
     def __init__(self, index):
         self.index = index
-
-
-
-
-
-
 
 
 # 불개미는 ‘강세의’라는 뜻의 ‘bull’ 과 ‘개미’의 결합어로 주,식시장에서 강세장을 예상해 공격적 매수를 하는 개인투자자를 의미합니다. 시장을 낙관적(Bull)으로 보고 무섭게 뛰어든다는 뜻도 담겨있죠.
@@ -67,3 +72,4 @@ class SuperAntAgent(AntAgent):
 class KingAntAgent(AntAgent):
     def __init__(self, index):
         self.index = index
+"""
