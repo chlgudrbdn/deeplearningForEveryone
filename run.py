@@ -1,13 +1,20 @@
 # -*- coding: utf-8 -*-
-import Enviroment
-import Agent
+from environment import Environment
+# import enviroment
+# from Agent import AntAgent
+# from Agent import Institution
+from Agent import Agent
 import random
 import math
 import pandas as pd
 import numpy as np
+import settings
+import os
 import time
-start_time = time.time()
+import data_manager
 
+start_time = time.time()
+"""
 firstPrice = 300
 maximumPrice = 2000
 priceChangeAmount = 100
@@ -20,13 +27,49 @@ alpha = 0.45
 beta = 0.3
 delta = 0.08
 trycount = 30
-
+"""
 # for TRY in range(trycount):
+stock_code = '005930'  # 삼성전자
+
+# 주식 데이터 준비
+chart_data = data_manager.load_chart_data(
+    os.path.join(settings.BASE_DIR,
+                 'data/chart_data/{}.csv'.format(stock_code)))
+prep_data = data_manager.preprocess(chart_data)
+training_data = data_manager.build_training_data(prep_data)
+
+# 기간 필터링
+training_data = training_data[(training_data['date'] >= '2017-01-01') &
+                              (training_data['date'] <= '2017-12-31')]
+training_data = training_data.dropna()
+
+# 차트 데이터 분리
+features_chart_data = ['date', 'open', 'high', 'low', 'close', 'volume']
+chart_data = training_data[features_chart_data]
+
+# 학습 데이터 분리
+features_training_data = [
+    'open_lastclose_ratio', 'high_close_ratio', 'low_close_ratio',
+    'close_lastclose_ratio', 'volume_lastvolume_ratio',
+    'close_ma5_ratio', 'volume_ma5_ratio',
+    'close_ma10_ratio', 'volume_ma10_ratio',
+    'close_ma20_ratio', 'volume_ma20_ratio',
+    'close_ma60_ratio', 'volume_ma60_ratio',
+    'close_ma120_ratio', 'volume_ma120_ratio'
+]
+training_data = training_data[features_training_data]
 
 
+environment = Environment(chart_data)
+# enviroment.trade_accept_check
 
+ant = Agent(index=0, environment=environment)
+ant.set_balance(10000000)  # 천만
+institution = Agent(index=0, environment=environment)
+institution.set_balance(1000000000)  # 십억
 
-
+ant_choice = ant.select_choice()
+institution_choice = institution.select_choice()
 
 
 """
